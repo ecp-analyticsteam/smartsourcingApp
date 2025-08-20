@@ -1,0 +1,5 @@
+# Ignore the .streamlit folder
+.streamlit/
+
+# Ignore all JSON files in the repo
+*.json
