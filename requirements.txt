@@ -1,0 +1,8 @@
+streamlit==1.45.0
+firebase-admin
+google-auth
+pandas
+streamlit-aggrid
+pyrebase4
+Pillow
+openpyxl
