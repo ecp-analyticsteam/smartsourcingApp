@@ -3,6 +3,7 @@ import datetime
 import json
 import firebase_admin
 from firebase_admin import credentials, firestore, db as realtime_db
+from firebase_admin import auth
 from google.oauth2 import service_account
 import streamlit as st
 from functools import lru_cache
