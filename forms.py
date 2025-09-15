@@ -131,29 +131,39 @@ def deploy_forms(form_data):
                 )
                 # Allow user to enter a new name if not in the list
             with c2_r3:
-                # Use a text_input for new customer names, fallback to selectbox for existing
-                selected_name = st.selectbox(
-                    "Customer Name",
-                    options=customer_names,
-                    index=customer_names.index(form_data.get("customerForm", {}).get("name", "")) if form_data.get(
-                        "customerForm", {}).get("name", "") in customer_names else 0,
-                    key="customer_name_select",
-                    placeholder="Select a customer name"
-                )
-                # Allow user to enter a new name if not in the list
-                new_name = st.text_input(
-                    "Or enter a new customer name",
-                    value="" if selected_name in customer_names else form_data.get("customerForm", {}).get("name", ""),
-                    key="customer_name_input",
-                    placeholder="Type new customer name"
-                )
-                # Determine final customer name
-                final_customer_name = new_name if new_name else selected_name
-                st.session_state.name = final_customer_name
+                
+                # If in edit mode, show only text input for customer name
+                if st.session_state.form_mode == "edit":
+                    final_customer_name = st.text_input(
+                        "Customer Name",
+                        value=form_data.get("customerForm", {}).get("name", ""),
+                        key="customer_name_input",
+                        placeholder="Type customer name"
+                    )
+                    st.session_state.name = final_customer_name
+                else:
+                    # Use a selectbox with "All" as the default option, followed by customer names
+                    customer_options = ["All"] + customer_names
+                    selected_name = st.selectbox(
+                        "Customer Name",
+                        options=customer_options,
+                        key="customer_name_select",
+                        placeholder="Select a customer name"
+                    )
+                    # Allow user to enter a new name if not in the list
+                    new_name = st.text_input(
+                        "Or enter a new customer name",
+                        value="" if selected_name in customer_names else form_data.get("customerForm", {}).get("name", ""),
+                        key="customer_name_input",
+                        placeholder="Type new customer name"
+                    )
+                    # Determine final customer name
+                    final_customer_name = new_name if new_name else selected_name
+                    st.session_state.name = final_customer_name
 
-                # Add new name to customer_names if not present
-                if new_name and new_name not in customer_names:
-                    customer_names.append(new_name)
+                    # Add new name to customer_names if not present
+                    if new_name and new_name not in customer_names:
+                        customer_names.append(new_name)
 
             # Row 4: Customer PO No, CPO Date, Customer Status
             c1_r4, c2_r4, c3_r4 = st.columns(3)
@@ -414,3 +424,4 @@ def handle_form_submission(type):
     customer_form = all_data.get("customerForm", {})
     reference_number = customer_form.get("referenceNumber", "unknown")
     api.save_record(reference_number, all_data, form_type, type)
+    
